@@ -24,3 +24,9 @@
   background-color: #02b9d5;
   cursor: pointer;
 }
+
+.stone {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
