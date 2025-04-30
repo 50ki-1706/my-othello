@@ -13,6 +13,15 @@ const directions = [
   [1, 1],
 ];
 
+const checkTurnColorBefore = (board: number[][]) => {
+  const count = board.flat().filter((cell) => cell == 0).length;
+  return count;
+};
+const checkTurnColorAfter = (board: number[][]) => {
+  const count = board.flat().filter((cell) => cell == 0).length;
+  return count;
+};
+
 export default function Home() {
   const [gameBoard, setGameBoard] = useState<number[][]>([
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -27,8 +36,8 @@ export default function Home() {
   const [turnColor, setTurnColor] = useState(1);
 
   const handleClick = (x: number, y: number) => {
-    // console.log(`Clicked cell at (${x}, ${y})`);
     const newGameBoard = structuredClone(gameBoard);
+    const before = checkTurnColorBefore(newGameBoard);
     if (newGameBoard[y][x] !== 0) return;
     directions.forEach(([dy, dx]) => {
       for (let i = 1; i < 8; i++) {
@@ -47,7 +56,11 @@ export default function Home() {
       }
     });
     setGameBoard(newGameBoard);
-    setTurnColor(2 / turnColor);
+    const after = checkTurnColorAfter(newGameBoard);
+    console.log(before, after);
+    if (before > after) {
+      setTurnColor(2 / turnColor);
+    }
   };
 
   return (
