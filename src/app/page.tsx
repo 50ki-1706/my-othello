@@ -43,7 +43,7 @@ export default function Home() {
       for (let i = 1; i < 8; i++) {
         const ny = y + dy * i;
         const nx = x + dx * i;
-        if (newGameBoard[ny] !== undefined && newGameBoard[ny][nx] === 0) break;
+        if (newGameBoard[ny] !== undefined && newGameBoard[ny][nx] !== 2 / turnColor) break;
         if (newGameBoard[ny] !== undefined && newGameBoard[ny][nx] === 2 / turnColor) {
           if (newGameBoard[ny + dy] !== undefined && newGameBoard[ny + dy][nx + dx] === turnColor) {
             for (let j = 0; j < i + 1; j++) {
@@ -57,7 +57,6 @@ export default function Home() {
     });
     setGameBoard(newGameBoard);
     const after = checkTurnColorAfter(newGameBoard);
-    console.log(before, after);
     if (before > after) {
       setTurnColor(2 / turnColor);
     }
