@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './page.module.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const directions = [
   [-1, -1],
@@ -51,6 +51,26 @@ const checkCanPutPosition = (board: number[][], turnColor: number) => {
   return newBoard;
 };
 
+const putStone = (board: number[][], turnColor: number, x: number, y: number) => {
+  directions.forEach(([dy, dx]) => {
+    for (let i = 1; i < 8; i++) {
+      const ny = y + dy * i;
+      const nx = x + dx * i;
+      if (board[ny] !== undefined && board[ny][nx] !== 2 / turnColor) break;
+      if (board[ny] !== undefined && board[ny][nx] === 2 / turnColor) {
+        if (board[ny + dy] !== undefined && board[ny + dy][nx + dx] === turnColor) {
+          for (let j = 0; j < i + 1; j++) {
+            const nny = y + dy * j;
+            const nnx = x + dx * j;
+            board[nny][nnx] = turnColor;
+          }
+        }
+      }
+    }
+  });
+  return board;
+};
+
 const getCellClass = (cell: number) => {
   switch (cell) {
     case 1:
@@ -65,66 +85,39 @@ const getCellClass = (cell: number) => {
 };
 
 export default function Home() {
-  const [gameBoard, setGameBoard] = useState<number[][]>([
+  const [board, setBoard] = useState<number[][]>([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 2, 0, 0, 0],
-    [0, 0, 0, 2, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 3, 0, 0, 0],
+    [0, 0, 0, 1, 2, 3, 0, 0],
+    [0, 0, 3, 2, 1, 0, 0, 0],
+    [0, 0, 0, 3, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
   const [turnColor, setTurnColor] = useState(1);
 
   const handleClick = (x: number, y: number) => {
-    if (gameBoard[y][x] !== 3) return;
-    console.log('a');
-    const newGameBoard = structuredClone(gameBoard);
+    if (board[y][x] !== 3) return;
+    const newGameBoard = structuredClone(board);
     const before = checkTurnColorBefore(newGameBoard);
-    directions.forEach(([dy, dx]) => {
-      console.log('b');
-      for (let i = 1; i < 8; i++) {
-        const ny = y + dy * i;
-        const nx = x + dx * i;
-        if (newGameBoard[ny] !== undefined && newGameBoard[ny][nx] !== 2 / turnColor) break;
-        if (newGameBoard[ny] !== undefined && newGameBoard[ny][nx] === 2 / turnColor) {
-          if (newGameBoard[ny + dy] !== undefined && newGameBoard[ny + dy][nx + dx] === turnColor) {
-            for (let j = 0; j < i + 1; j++) {
-              console.log('eee');
-              const nny = y + dy * j;
-              const nnx = x + dx * j;
-              newGameBoard[nny][nnx] = turnColor;
-            }
-          }
-        }
-      }
-    });
-
-    const after = checkTurnColorAfter(newGameBoard);
+    const result = putStone(newGameBoard, turnColor, x, y);
+    const after = checkTurnColorAfter(result);
     if (before > after) {
       setTurnColor(2 / turnColor);
       console.log(turnColor);
-      const nextBoard = checkCanPutPosition(newGameBoard, 2 / turnColor);
-      setGameBoard(nextBoard);
+      const nextBoard = checkCanPutPosition(result, 2 / turnColor);
+      setBoard(nextBoard);
     }
   };
 
-  useEffect(() => {
-    console.log(turnColor);
-    const result = checkCanPutPosition(gameBoard, turnColor);
-    setGameBoard(result);
-  }, []);
-
   return (
     <div className={styles.container}>
-      {gameBoard.map((row, y) => (
+      {board.map((row, y) => (
         <div key={y} className={styles.row}>
           {row.map((cell, x) => (
             <div key={x} className={styles.cell} onClick={() => handleClick(x, y)}>
-              {gameBoard[y][x] !== 0 && (
-                <div className={styles.stone} style={getCellClass(cell)}></div>
-              )}
+              {board[y][x] !== 0 && <div className={styles.stone} style={getCellClass(cell)}></div>}
             </div>
           ))}
         </div>
