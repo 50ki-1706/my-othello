@@ -5,17 +5,18 @@ import { useState } from 'react';
 import { getCellStyle } from './utils/getCellStyle';
 import { putStone } from './lib/putStone';
 import { markValidMoves } from './lib/markValidMoves';
+import { countValidMoves } from './lib/countValidMoves';
 
 export default function Home() {
   const [board, setBoard] = useState<number[][]>([
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 3, 0, 0, 0],
-    [0, 0, 0, 1, 2, 3, 0, 0],
-    [0, 0, 3, 2, 1, 0, 0, 0],
-    [0, 0, 0, 3, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 1, 1, 1, 1, 2, 1],
+    [1, 2, 1, 2, 2, 1, 2, 1],
+    [1, 2, 1, 2, 1, 1, 2, 1],
+    [1, 2, 1, 1, 1, 2, 2, 1],
+    [1, 2, 2, 2, 2, 2, 3, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
   ]);
   const [turnColor, setTurnColor] = useState(1);
 
@@ -26,6 +27,16 @@ export default function Home() {
     setTurnColor(2 / turnColor);
     console.log(turnColor);
     const nextBoard = markValidMoves(result, 2 / turnColor);
+    const validMovesCount = countValidMoves(nextBoard);
+    if (validMovesCount === 0) {
+      alert('Pass!');
+      setTurnColor(turnColor);
+      const nextBoard = markValidMoves(result, turnColor);
+      const validMovesCount = countValidMoves(nextBoard);
+      if (validMovesCount === 0) {
+        alert('Game Over');
+      }
+    }
     setBoard(nextBoard);
   };
 
