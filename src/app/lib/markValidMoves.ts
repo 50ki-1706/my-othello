@@ -1,6 +1,6 @@
 import { directions } from './constants';
-export const markValidMoves = (board: number[][], turnColor: number) => {
-  const newBoard = structuredClone(board).map((row) => row.map((cell) => (cell === 3 ? 0 : cell)));
+export const markValidMoves = (board: number[][], turnColor: number): number[][] => {
+  const newBoard = structuredClone(board);
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
       if (newBoard[y][x] !== 0) continue;
