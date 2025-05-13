@@ -40,7 +40,6 @@ export default function Home() {
     const [result, canPut] = putStone(newBoard, board.color, x, y);
     if (!canPut) return;
     setBoard({ board: result, color: 2 / board.color });
-    console.table(newBoard);
   };
   return (
     <div className={styles.container}>
